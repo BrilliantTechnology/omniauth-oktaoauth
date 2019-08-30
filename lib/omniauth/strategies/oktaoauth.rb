@@ -57,13 +57,8 @@ module OmniAuth
       end
 
       def raw_info
-        if options[:auth_server_id]
-          options[:auth_server_id] = options[:auth_server_id] + "/"
-        else
-          options[:auth_server_id] = ""
-        end
-
-        @_raw_info ||= access_token.get('/oauth2/' + options[:auth_server_id] + 'v1/userinfo').parsed || {}
+        uri = URI(options[:issuer])
+        @_raw_info ||= access_token.get("#{uri.path}/v1/userinfo").parsed || {}
       rescue ::Errno::ETIMEDOUT
         raise ::Timeout::Error
       end
